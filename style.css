@@ -1,0 +1,154 @@
+body {
+    background-image: url('./img/haikei.jpeg');
+    background-size: cover;
+    background-position: center;
+    font-family: Arial, sans-serif;
+    background-color: #e6f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.chat-container {
+    width: 40%;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.input-container {
+    margin-bottom: 20px;
+}
+
+.input-container div {
+    margin-bottom: 10px;
+}
+
+.input-container textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    resize: none;
+}
+
+.input-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #dcc8dc;
+    color: black;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.input-container button:hover {
+    background-color: #e1c0b6;
+}
+
+.message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.message img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.message-content {
+    background: #e4e6eb; 
+    padding: 10px;
+    border-radius: 8px;
+    position: relative;
+    max-width: 90%;
+}
+
+.message-content:before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent #e4e6eb transparent transparent;
+}
+
+.message-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.message-time {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+}
+
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    color: #e0245e; /* ハートの色 */
+}
+
+.delete-btn {
+    background: #968f8f;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.delete-btn:hover {
+    background: #e03333;
+}
+
+.send-container {
+    display: flex;
+    margin-top: 20px;
+}
+
+.send-container input, 
+.send-container textarea, 
+.send-container button {
+    padding: 10px;
+    font-size: 1em;
+}
+
+.send-container input {
+    width: 100%;
+    margin-right: 10px;
+}
+
+.send-container textarea {
+    width: 100%;
+    margin-right: 20px;
+    resize: none;
+}
+
+.send-container button {
+    background-color: #e4e6eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.send-container button:hover {
+    background-color: #e4e6eb;
+}
+
+#output {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 20px;
+}

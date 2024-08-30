@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>ほんわかチャットアプリ</title>
+    <link rel="stylesheet" href="style.css"> <!-- 外部CSSファイルの読み込み -->
+</head>
+<body>
+
+<!-- コンテンツ表示画面 -->
+<div class="chat-container">
+    <div class="input-container">
+        <div>Name：<input type="text" id="uname"></div>
+        <div>   
+            アイコンを選択:
+            <select id="iconSelect">
+                <option value="img/animal_buta.png">ぶたさん</option>
+                <option value="img/animal_mitsubachi.png">ミツバチ</option>
+                <option value="img/icon1.png">アルパカ</option>
+                <option value="img/icon2.png">ねこちゃん</option>
+            </select>
+        </div>
+
+        <textarea id="text" cols="50" rows="10" placeholder="メッセージを入力..."></textarea>
+        <button id="send">送信</button>
+    </div>
+    <div id="output"></div>
+</div>
+<!--/ コンテンツ表示画面 -->
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Firebase SDK -->
+<script type="module">
+    // Firebase SDKのインポート
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+    import { getDatabase, ref, push, set, onChildAdded, remove, update, get } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-database.js";
+
+    // Firebaseの設定
+    const firebaseConfig = {
+        apiKey: "AIzaSyAydL-nW_N7n6PFyQJv4fDHJttWegIYXhk",
+        authDomain: "sample-a7b7f.firebaseapp.com",
+        projectId: "sample-a7b7f",
+        storageBucket: "sample-a7b7f.appspot.com",
+        messagingSenderId: "504222175473",
+        appId: "1:504222175473:web:f74f23c06b8487859b9950",
+        databaseURL: "https://sample-a7b7f-default-rtdb.firebaseio.com"  // Realtime DatabaseのURLを追加
+    };
+
+    // Firebaseの初期化
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app); // RealtimeDBに接続
+    const dbRef = ref(db, "chat"); // RealtimeDB内の"chat"を使う
+
+    // メッセージ送信ボタンのクリックイベント
+    $("#send").on("click", function() {
+        const selectedIcon = $("#iconSelect").val();  // 選択されたアイコンのパスを取得
+        const msg = {
+            uname: $("#uname").val(),
+            text: $("#text").val(),
+            createdAt: new Date().toISOString(), // ISO形式のタイムスタンプ
+            photoURL: selectedIcon, // 選択されたアイコンのURL
+            likes: 0 // 初期状態のいいね数
+        };
+        if (msg.uname && msg.text) { // 名前とメッセージが入力されている場合のみ送信
+            const newPostRef = push(dbRef); // ユニークキーを生成
+            set(newPostRef, msg);
+            $("#text").val(''); // テキストエリアをクリア
+        } else {
+            alert("名前とメッセージを入力してください。");
+        }
+    });
+
+    // 新しいメッセージが追加されたときに呼び出される関数
+    onChildAdded(dbRef, function(data) {
+        const msg = data.val();
+        const key = data.key; //ユニークキー
+        let h = '<div class="message" id="' + key + '">';
+        h += '<img src="' + msg.photoURL + '" alt="icon">';
+        h += '<div class="message-content">';
+        h += '<div class="message-name">' + msg.uname + '</div>';
+        h += '<div>' + msg.text + '</div>';
+        h += '<div class="message-time">' + new Date(msg.createdAt).toLocaleString('ja-JP') + '</div>';
+        h += '<button class="like-btn" data-id="' + key + '">❤️ ' + msg.likes + '</button>';
+        h += '<button class="delete-btn" data-id="' + key + '">削除</button>';
+        h += '</div></div>';
+        $("#output").append(h);
+        $('#output').scrollTop($('#output')[0].scrollHeight); // スクロールを一番下に
+    });
+
+    // いいねボタンのクリックイベント
+    $(document).on("click", ".like-btn", function() {
+        const key = $(this).data("id");
+        const messageRef = ref(db, 'chat/' + key);
+
+        get(messageRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const newLikes = (data.likes || 0) + 1;
+                update(messageRef, { likes: newLikes }).then(() => {
+                    // いいねボタンのテキストを更新
+                    $(`[data-id='${key}'].like-btn`).text(`❤️ ${newLikes}`);
+                });
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    });
+
+    // 削除ボタンのクリックイベント
+    $(document).on("click", ".delete-btn", function() {
+        const key = $(this).data("id");
+        const messageRef = ref(db, 'chat/' + key);
+        remove(messageRef).then(() => {
+            $("#" + key).remove(); // メッセージを画面から削除
+        }).catch((error) => {
+            console.error(error);
+        });
+    });
+
+</script>
+
+</body>
+</html>
